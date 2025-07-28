@@ -1,0 +1,43 @@
+name: Render PlantUML Diagrams
+
+on:
+  push:
+    paths:
+      - '**.puml'
+
+jobs:
+  plantuml:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+
+    - name: Install Graphviz
+      run: sudo apt-get install -y graphviz
+
+    - name: Render PlantUML to SVG
+      run: |
+        mkdir -p rendered
+        for file in $(find . -name '*.puml'); do
+          echo "Rendering $file"
+          plantuml -tsvg -o ../rendered "$file"
+        done
+
+    - name: Copy rendered images to repo
+      run: |
+        mkdir -p plantuml-diagrams
+        find ./rendered -name '*.svg' -exec cp {} plantuml-diagrams/ \;
+
+    - name: Commit and push rendered diagrams
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'actions@github.com'
+        git add plantuml-diagrams
+        git commit -m "Add rendered diagrams [auto]" || echo "No changes"
+        git push
