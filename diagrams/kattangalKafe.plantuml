@@ -1,0 +1,21 @@
+@startuml
+
+actor "Customer" as customer
+actor "Staff" as staff
+actor "Admin" as admin
+
+usecase "Place Order" as UC1
+usecase "View Menu" as UC2
+usecase "Make Payment" as UC3
+usecase "Update Menu" as UC4
+usecase "View Orders" as UC5
+usecase "Manage Staff" as UC6
+
+customer --> UC1
+customer --> UC2
+customer --> UC3
+staff --> UC4
+staff --> UC5
+admin --> UC6
+
+@enduml
